@@ -34,6 +34,7 @@ import java.io.IOException;
 
 import static org.jeo.android.graphics.Graphics.*;
 import static org.jeo.map.CartoCSS.*;
+import org.jeo.proj.Proj;
 
 /**
  * Renders a map to an Android {@link Canvas}.
@@ -99,7 +100,8 @@ public class AndroidRenderer extends BaseRenderer {
         try {
             TilePyramid pyr = data.pyramid();
 
-            TileCover cov = pyr.cover(view.getBounds(), view.getWidth(), view.getHeight());
+            Envelope bbox = reproject(null, view.getBounds(), data);
+            TileCover cov = pyr.cover(bbox, view.getWidth(), view.getHeight());
             cov.fill(data);
 
             Rect dst = new Rect();
@@ -117,7 +119,7 @@ public class AndroidRenderer extends BaseRenderer {
                     Tile t = cov.tile(x, y);
 
                     // clip source rectangle
-                    Rect src = clipTile(t, pyr);
+                    Rect src = clipTile(t, pyr, bbox);
 
                     dst.right = dst.left + (int) (src.width() * scx);
                     dst.top = dst.bottom - (int) (src.height() * scy);
@@ -143,9 +145,9 @@ public class AndroidRenderer extends BaseRenderer {
         tx.apply(canvas);
     }
 
-    Rect clipTile(Tile t, TilePyramid pyr) {
+    Rect clipTile(Tile t, TilePyramid pyr, Envelope view) {
         Envelope tb = pyr.bounds(t);
-        Envelope i = tb.intersection(view.getBounds());
+        Envelope i = tb.intersection(view);
 
         Rect rect = new Rect(0, 0, pyr.getTileWidth(), pyr.getTileHeight());
 

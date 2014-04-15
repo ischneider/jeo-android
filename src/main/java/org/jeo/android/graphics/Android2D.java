@@ -46,6 +46,7 @@ public class Android2D implements RendererFactory<AndroidRenderer> {
     @Override
     public AndroidRenderer create(View view, Map<?, Object> opts) {
         Bitmap img = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        return new AndroidRenderer(new Canvas(img), img);
+        AndroidRenderer renderer = new AndroidRenderer(new Canvas(img), img);
+        return renderer;
     }
 }

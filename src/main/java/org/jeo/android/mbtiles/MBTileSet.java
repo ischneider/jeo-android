@@ -158,6 +158,7 @@ public class MBTileSet implements TileDataset, FileData {
     @Override
     public TilePyramid pyramid() throws IOException {
         TilePyramidBuilder tpb = TilePyramid.build();
+        tpb.crs(crs());
         tpb.bounds(Proj.bounds(crs()));
 
         android.database.Cursor c = db.query(TILES, new String[]{"zoom_level"}, null, null, 
